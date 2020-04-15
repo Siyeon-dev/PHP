@@ -1,0 +1,12 @@
+<?php
+$zipcode = trim($_POST['zipcode']);
+$zip_length = strlen($zipcode);
+if($zip_length != 5) {
+    print "우편번호를 5자리로 입력해주세요.";
+}
+?>
+<!-- 윗 코드를 아랫 코드로 수정할 수 있다. -->
+<?php
+if(strlen(trim($_POST['zipcode'])) != 5)
+    print "우편 번호를 5자리로 입력해주세요."
+?>
