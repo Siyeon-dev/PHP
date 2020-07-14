@@ -1,4 +1,8 @@
 <?php
+class boardConf {
+  const IS_CHECK_PASSWORD = false;
+}
+
 // <<-- 포스트를 저장할 객체
 class PostData {
   public $board_id;
@@ -29,8 +33,8 @@ class PostData {
 
 // <<-- 페이지네이션 데이터를 저장할 객체
 class PaginationData {
-  const numMaxPost      = 3;  // 페이지당 포스트 수
-  const numMaxPage      = 3;  // 블럭당 페이지 수
+  const numMaxPost      = 5;  // 페이지당 포스트 수
+  const numMaxPage      = 10;  // 블럭당 페이지 수
 
   public $numRows         = 0;  // 총 포스트 수
   public $numPages        = 0;  // 총 페이지 수

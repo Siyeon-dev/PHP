@@ -1,5 +1,5 @@
 <?php
-require_once('../../db_info.php');
+require_once('../db_info.php');
 
 // <<-- 환경 설정 class
 class confData {

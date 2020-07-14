@@ -1,5 +1,5 @@
 <?php
-require_once('../../db_info.php');
+require_once('../db_info.php');
 require_once('./boardConfig.php');
 
 $postList = []; // 글 객체가 저장되는 배열
@@ -46,16 +46,15 @@ function getPaginationData() {
   $result = $conn->query("SELECT * FROM mybulletin");
 
   $NUM_ROWS        = $result->num_rows; // DB 테이블에 저장되어 있는 총 row 수
-  $NUM_PAGES       = ceil($NUM_ROWS / PaginationData::numMaxPost) - 1;  // 총 페이지 수
+  $NUM_PAGES       = ceil($NUM_ROWS / PaginationData::numMaxPost);  // 총 페이지 수
   $NUM_BLOCKS      = ceil($NUM_PAGES / PaginationData::numMaxPage) - 1; // 총 블럭 수
   $currentPage     = array_key_exists("start", $_GET) ? $_GET['start'] : $currentPage  = 0;  // 현재 페이지
   $currentBlock    = array_key_exists("block", $_GET) ? $_GET['block'] : $currentBlock = 0;  // 현재 블록
   $startQueryPoint = $currentPage * PaginationData::numMaxPost;  // 쿼리 시작 지점 (현재 페이지 * 페이지당 포스트 수)
 
-  if ($currentBlock < 0)
+  if ($currentBlock <= 0) {
     $currentBlock = 0;
-
-
+  }
 
   // 페이지네이션 관련 변수 객체 생성
   $paginationObj = new PaginationData($NUM_ROWS, $NUM_PAGES, $NUM_BLOCKS, $currentPage, $currentBlock, $startQueryPoint);
@@ -79,7 +78,7 @@ function prtPaginationData($argPaginationObj) {
   // 페이지 넘버링 출력 <a href>
   for ($i = $startPage; $i < $startPage + PaginationData::numMaxPage; $i++) {
     // 출력되는 페이지는 총 페이지 수를 넘지 않는다.
-    if ($i <= $argPaginationObj->numPages) {
+    if ($i < $argPaginationObj->numPages) {
       // 현재 보고 있는 페이지와 출력되는 페이지가 같을 경우 "빨간색" 으로 표시한다
       if ($argPaginationObj->currentPage != $i)
         echo "<a href=$_SERVER[PHP_SELF]?start=$i&block=$argPaginationObj->currentBlock>[" . ($i + 1) . "]</a>";
@@ -87,14 +86,13 @@ function prtPaginationData($argPaginationObj) {
         echo "<a href=$_SERVER[PHP_SELF]?start=$i&block=$argPaginationObj->currentBlock style=color:red>[" . ($i + 1) . "]</a>";
     }
   }
-
   // [>>][>] 출력 구문
   // 총 블럭 값과 현재 위치한 블럭 값이 같을 경우
-  if ($argPaginationObj->numBlocks != $argPaginationObj->currentBlock) {
+  if ($argPaginationObj->numBlocks > $argPaginationObj->currentBlock) {
     echo "<a href=$_SERVER[PHP_SELF]?block=" . ($argPaginationObj->currentBlock + 1) . "&start=" . ($startPage + PaginationData::numMaxPage) . ">[>]</a>";
-    echo "<a href=$_SERVER[PHP_SELF]?start=$argPaginationObj->numPages&block=" . ($argPaginationObj->numBlocks) . ">[>>]</a>";
+    echo "<a href=$_SERVER[PHP_SELF]?start=" . ($argPaginationObj->numPages - 1) . "&block=" . ($argPaginationObj->numBlocks) . ">[>>]</a>";
   } else {
-    echo "<a href=$_SERVER[PHP_SELF]?start=$argPaginationObj->numPages&block=" . ($argPaginationObj->numBlocks) . ">[>>]</a>";
+    echo "<a href=$_SERVER[PHP_SELF]?start=" . ($argPaginationObj->numPages - 1) . "&block=" . ($argPaginationObj->numBlocks) . ">[>>]</a>";
   }
 }
 // -->> 페이지네이션 출력 함수

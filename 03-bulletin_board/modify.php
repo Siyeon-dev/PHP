@@ -3,6 +3,7 @@ require_once('../db_info.php');
 require_once('./boardConfig.php');
 
 
+
 // <<-- DB 로부터 저장되어있는 글 정보를 가져오는 함수
 function getPostOnDB() {
   $conn = connectDB();
@@ -22,21 +23,7 @@ function getPostOnDB() {
 }
 // -->> DB 로부터 저장되어있는 글 정보를 가져오는 함수
 
-// <<-- 방문자 수를 증가시키는 함수
-function increaseHits() {
-  $conn = connectDB();
-  $getPostQuery = "UPDATE mybulletin SET hits = hits + 1 WHERE board_id = {$_GET['board_id']}";
-
-  if (!$result = $conn->query($getPostQuery)) {
-    echo "쿼리문 실패! ";
-    exit(-1);
-  }
-}
-// -->> 방문자 수를 증가시키는 함수
-
-increaseHits();
 $postData = getPostOnDB();
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,31 +61,26 @@ $postData = getPostOnDB();
 
   <fieldset style="border: 1 solid">
     <legend>
-      <h1 style="display: inline">글 보기</h1>
+      <h1 style="display: inline">수정하기</h1>
     </legend>
-
     <p style="text-align: right;">글번호 - <?php echo $postData->board_id ?></p>
-    <form action="list.php" method="POST">
+    <form action="modify_process.php" method="POST">
+      <input type="hidden" name="board_id" value="<?php echo $postData->board_id ?>">
       <label for="title">제목</label>
-      <input type="text" id="title" name="title" placeholder="제목을 입력해주세요" value="<?php echo $postData->title ?>" disabled readonly>
+      <input type="text" id="title" name="title" placeholder="제목을 입력해주세요" value="<?php echo $postData->title ?>">
       <label for="userId">작성자</label>
-      <input type="text" id="userId" name="userId" placeholder="작성자 이름을 입력해주세요" value="<?php echo $postData->user_name ?>" disabled readonly>
-      <label for="userPw">작성일</label>
-      <input type="text" id="userPw" name="userPw" placeholder="비밀번호를 입력해주세요" value="<?php echo date_format(date_create($postData->reg_date), "Y년 m월 d일") ?>" disabled readonly>
+      <input type="text" id="userId" name="userId" placeholder="작성자 이름을 입력해주세요" value="<?php echo $postData->user_name ?>">
+      <label for="userPw">비밀번호</label>
+      <input type="password" id="userPw" name="userPw" placeholder="비밀번호를 입력해주세요" value="">
       <br>
       <label for="text">본문</label>
-      <textarea name="text" id="text" cols="48" rows="10" style="resize: none" placeholder="<?php echo $postData->contents ?>" disabled readonly></textarea>
-      <input type="submit" id="Submit" value="글목록" style="background-color:#d3dce6; color:#4e5152">
+      <textarea name="text" id="text" cols="48" rows="10" style="resize: none"><?php echo $postData->contents ?></textarea>
+      <input type="submit" id="Submit" value="수정완료" style="background-color:#d3dce6; color:#4e5152">
     </form>
-    <form action="modify.php">
-      <input type="submit" id="Submit" value="글수정" style="background-color:#d3dce6; color:#4e5152">
-      <input type="hidden" id="Submit" name="board_id" value="<?php echo $postData->board_id ?>" style="background-color:#d3dce6; color:#4e5152">
+    <form action="view.php" method="GET">
+      <input type="submit" id="Submit" value="이전" style="background-color:#d3dce6; color:#4e5152">
+      <input type="hidden" name="board_id" value="<?php echo $postData->board_id ?>">
     </form>
-    <form action="delete.php">
-      <input type="submit" id="Submit" value="글삭제" style="background-color:#d3dce6; color:#4e5152">
-    </form>
-
-
   </fieldset>
 </body>
 
