@@ -48,6 +48,9 @@
       <textarea name="text" id="text" cols="48" rows="10" style="resize: none"></textarea>
       <input type="submit" id="Submit" value="글쓰기" style="background-color:#d3dce6; color:#4e5152">
     </form>
+    <form action="list.php" method="GET">
+      <input type="submit" id="Submit" value="목록으로" style="background-color:#d3dce6; color:#4e5152">
+    </form>
   </fieldset>
 </body>
 

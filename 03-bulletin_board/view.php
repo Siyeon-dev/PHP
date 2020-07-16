@@ -92,13 +92,12 @@ $postData = getPostOnDB();
     </form>
     <form action="modify.php">
       <input type="submit" id="Submit" value="글수정" style="background-color:#d3dce6; color:#4e5152">
-      <input type="hidden" id="Submit" name="board_id" value="<?php echo $postData->board_id ?>" style="background-color:#d3dce6; color:#4e5152">
+      <input type="hidden" id="Submit" name="board_id" value="<?php echo $postData->board_id ?>">
     </form>
-    <form action="delete.php">
+    <form action="delete.php" method="POST">
       <input type="submit" id="Submit" value="글삭제" style="background-color:#d3dce6; color:#4e5152">
+      <input type="hidden" id="Submit" name="board_id" value="<?php echo $postData->board_id ?>">
     </form>
-
-
   </fieldset>
 </body>
 

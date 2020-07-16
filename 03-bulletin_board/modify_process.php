@@ -53,6 +53,7 @@ function comparePassword($argPwFromDB, $argPwFromUser) {
 }
 // -->> 비밀번호를 비교하는 함수
 
+// <<-- 수정된 내용을 DB에 반영하는 함수
 function updatePostDB() {
   $conn = connectDB();
   $updateQuery = "UPDATE mybulletin SET " .
@@ -65,20 +66,17 @@ function updatePostDB() {
     echo "쿼리문 실패";
   }
 }
-
+// -->> 수정된 내용을 DB에 반영하는 함수
 
 // <<-- list.php 호출 함수
 function hrefListPage($argResult) {
   if ($argResult == 0)
     echo '<script>alert("입력하지 않은 항목이 존재합니다.");</script>';
   else if ($argResult == 2) {
-    echo '<script>alert("비밀번호를 확인해주세요.");</script>';
-    $str = <<<'HTML'
-      <script>
-        location.href="list.php";
-      </script>
-    HTML;
-    echo $str;
+    echo '<script>';
+    echo 'alert("패스워드가 일치하지 않습니다.");';
+    echo 'location.href="view.php?board_id=' . $_POST['board_id'] . '";';
+    echo '</script>';
   }
 
   $str = <<<'HTML'
@@ -94,9 +92,9 @@ function hrefListPage($argResult) {
 // 통과하지 못하면 팝업 출력 후 list.php 호출
 if (checkInputValue()) {
   // echo comparePassword(getPasswordOnDB(), $_POST['userPw']);
-  comparePassword(getPasswordOnDB(), $_POST['userPw']) ? updatePostDB() : hrefListPage(2); // list.php 호출;
+  comparePassword(getPasswordOnDB(), $_POST['userPw']) ? updatePostDB() : hrefListPage(2); // view.php 호출;
 
   hrefListPage(1); // list.php 호출 (이동)
 } else {
-  hrefListPage(0); // list.php 호출
+  hrefListPage(0); // view.php 호출
 }

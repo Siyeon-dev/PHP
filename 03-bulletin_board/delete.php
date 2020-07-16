@@ -1,78 +1,52 @@
-<?php
-require_once('../db_info.php');
-require_once('./boardConfig.php');
+<!DOCTYPE html>
+<html lang="en">
 
-// <<-- DB 로부터 해당 포스트의 작성된 패스워드를 가져오는 함수
-function getPasswordOnDB() {
-  $conn = connectDB();
-  $getPasswdQuery = "SELECT user_passwd FROM mybulletin WHERE board_id={$_POST['postData']}";
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="/JavaScript/Kimbug/CSS/styles.css" />
+  <style>
+    textarea:focus,
+    textarea:hover,
+    textarea:active {
+      border-color: #1fb6ff;
+      outline: none;
+      box-shadow: none;
+    }
 
-  if (!$result = $conn->query($getPasswdQuery)) {
-    echo "쿼리문 실패! ";
-    exit(-1);
-  }
-  $userPwOnDB = $result->fetch_array();
-  return $userPwOnDB[0];
-}
-// -->> DB 로부터 해당 포스트의 작성된 패스워드를 가져오는 함수
+    textarea {
+      display: block;
+      width: 360px;
+      height: 200px;
+      padding: 0 12px;
+      border-radius: 7px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      border: 1px solid #d3dce6;
+      transition: border-color 200ms ease-in-out;
+    }
+  </style>
+</head>
 
-// <<-- 비밀번호를 비교하는 함수
-function comparePassword($argPwFromDB, $argPwFromUser) {
-  if (password_verify($argPwFromUser, $argPwFromDB))
-    return true;
-  else
-    return false;
-}
-// -->> 비밀번호를 비교하는 함수
+<body>
 
-// <<-- 글을 지우는 함수
-function deletePost() {
-  $conn = connectDB();
-  $deletePostQuery = "DELETE FROM mybulletin WHERE board_id={$_POST['postData']}";
+  <fieldset style="border: 1 solid">
+    <legend>
+      <h1 style="display: inline">글삭제</h1>
+    </legend>
+    <form action="delete_process.php" method="POST">
+      <label for="userPw">비밀번호</label>
+      <input type="password" id="userPw" name="userPw" placeholder="비밀번호를 입력해주세요">
+      <input type="submit" id="Submit" value="삭제" style="background-color:#d3dce6; color:#4e5152">
+      <input type="hidden" name="board_id" value="<?php echo $_POST['board_id'] ?>">
+    </form>
+    <form action="view.php" method="GET">
+      <input type="submit" id="Submit" value="이전" style="background-color:#d3dce6; color:#4e5152">
+      <input type="hidden" name="board_id" value="<?php echo $_POST['board_id'] ?>">
+    </form>
+  </fieldset>
+</body>
 
-  if (!$result = $conn->query($deletePostQuery)) {
-    echo "쿼리문 실패! ";
-    exit(-1);
-  }
-}
-// -->> 글을 지우는 함수
-
-
-// <<-- list.php 호출 함수
-function hrefListPage($argResult) {
-  if (!$argResult) {
-    echo '<script>alert("패스워드가 일치하지 않습니다.");</script>';
-    $str = <<<'HTML'
-      <script>
-        location.href="list.php";
-      </script>
-    HTML;
-    echo $str;
-  } else {
-    echo '<script>alert("해당 글이 삭제되었습니다.");</script>';
-    $str = <<<'HTML'
-      <script>
-        location.href="list.php";
-      </script>
-    HTML;
-    echo $str;
-  }
-}
-// -->> list.php 호출 함수
-
-
-if (boardConf::IS_CHECK_PASSWORD) {
-  // 비밀번호 검사 할 때,
-  // 디비 비밀번호와 입력받은 비밀번호의 비교 후 삭제를 한다.
-  if (comparePassword(getPasswordOnDB(), 2)) {
-    deletePost();
-    hrefListPage(true);
-  } else {
-    hrefListPage(false);
-  }
-  // 비밀번호 감사하지 않을 때,
-  // 바로 비교하지않고 바로 삭제를 한다.
-} else {
-  deletePost();
-  hrefListPage(true);
-}
+</html>
