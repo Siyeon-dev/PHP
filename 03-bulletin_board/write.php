@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="/JavaScript/Kimbug/CSS/styles.css" />
+  <link rel="stylesheet" href="./style/styles.css" />
   <style>
     textarea:focus,
     textarea:hover,

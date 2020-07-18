@@ -1,4 +1,5 @@
 <?php
+// 기본적인 bulletin board 에 대한 설정 변수가 저장되는 class
 class boardConf {
   const IS_CHECK_PASSWORD = true;
 }
@@ -6,6 +7,7 @@ class boardConf {
 // <<-- 포스트를 저장할 객체
 class PostData {
   public $board_id;
+  public $board_pid;
   public $user_name;
   public $title;
   public $contents;
@@ -15,6 +17,7 @@ class PostData {
   // 생성자 함수 정의
   public function __construct(
     $argBoardId,
+    $argBoardPid,
     $argUserName,
     $argTitle,
     $argHits,
@@ -22,6 +25,7 @@ class PostData {
     $argContents
   ) {
     $this->board_id   = $argBoardId;
+    $this->board_pid  = $argBoardPid;
     $this->user_name  = $argUserName;
     $this->title      = $argTitle;
     $this->contents   = $argContents;
@@ -34,7 +38,7 @@ class PostData {
 // <<-- 페이지네이션 데이터를 저장할 객체
 class PaginationData {
   const numMaxPost      = 3;  // 페이지당 포스트 수
-  const numMaxPage      = 2;  // 블럭당 페이지 수
+  const numMaxPage      = 3;  // 블럭당 페이지 수
 
   public $numRows         = 0;  // 총 포스트 수
   public $numPages        = 0;  // 총 페이지 수

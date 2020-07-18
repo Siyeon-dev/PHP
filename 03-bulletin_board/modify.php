@@ -16,7 +16,7 @@ function getPostOnDB() {
 
   // DB에서 가져온 row 를 postData 객체로 생성 후 배열에 저장
   while ($data = $result->fetch_assoc()) {
-    $postData = new PostData($data['board_id'], $data['user_name'], $data['title'], $data['hits'], $data['reg_date'], $data['contents']);
+    $postData = new PostData($data['board_id'], $data['board_pid'], $data['user_name'], $data['title'], $data['hits'], $data['reg_date'], $data['contents']);
   }
 
   return $postData;
@@ -33,7 +33,7 @@ $postData = getPostOnDB();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="/JavaScript/Kimbug/CSS/styles.css" />
+  <link rel="stylesheet" href="./style/styles.css" />
   <style>
     textarea:focus,
     textarea:hover,
@@ -58,7 +58,6 @@ $postData = getPostOnDB();
 </head>
 
 <body>
-
   <fieldset style="border: 1 solid">
     <legend>
       <h1 style="display: inline">수정하기</h1>

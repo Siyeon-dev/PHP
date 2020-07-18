@@ -2,7 +2,7 @@
 require_once('../db_info.php');
 require_once('./boardConfig.php');
 
-$postList = []; // 글 객체가 저장되는 배열
+$postList = []; // 글 객체가 저장되는 배열`
 
 
 // <<-- DB 로부터 저장되어있는 글 목록을 가져오는 함수
@@ -23,7 +23,7 @@ function getPostOnDB(&$argPostList, $argPaginationObj, $argArraySearchedData) {
 
   // DB에서 가져온 row 를 postData 객체로 생성 후 배열에 저장
   while ($data = $result->fetch_assoc()) {
-    $postData = new PostData($data['board_id'], $data['user_name'], $data['title'], $data['hits'], $data['reg_date'], null);
+    $postData = new PostData($data['board_id'], $data['board_id'], $data['user_name'], $data['title'], $data['hits'], $data['reg_date'], $data['contents']);
     $argPostList[] = $postData;
   }
 
@@ -62,54 +62,73 @@ function getPaginationData($argArraySearchedData) {
 
   $NUM_ROWS        = $result->num_rows; // DB 테이블에 저장되어 있는 총 row 수
   $NUM_PAGES       = ceil($NUM_ROWS / PaginationData::numMaxPost);  // 총 페이지 수
-  $NUM_BLOCKS      = ceil($NUM_PAGES / PaginationData::numMaxPage) - 1; // 총 블럭 수
-  $currentPage     = array_key_exists("start", $_GET) ? $_GET['start'] : $currentPage  = 0;  // 현재 페이지
-  $currentBlock    = array_key_exists("block", $_GET) ? $_GET['block'] : $currentBlock = 0;  // 현재 블록
-  $startQueryPoint = $currentPage * PaginationData::numMaxPost;  // 쿼리 시작 지점 (현재 페이지 * 페이지당 포스트 수)
+  $NUM_BLOCKS      = ceil($NUM_PAGES / PaginationData::numMaxPage); // 총 블럭 수
+  $currentPage     = array_key_exists("start", $_GET) ? $_GET['start'] : $currentPage  = 1;  // 현재 페이지
+  $currentBlock    = array_key_exists("block", $_GET) ? $_GET['block'] : $currentBlock = 1;  // 현재 블록
 
-  if ($currentBlock <= 0) {
-    $currentBlock = 0;
+  $startQueryPoint = ($currentPage * PaginationData::numMaxPost) - PaginationData::numMaxPost;  // 쿼리 시작 지점 (현재 페이지 * 페이지당 포스트 수)  
+
+  if ($currentBlock <= 1) {
+    $currentBlock = 1;
   }
 
   // 페이지네이션 관련 변수 객체 생성
   $paginationObj = new PaginationData($NUM_ROWS, $NUM_PAGES, $NUM_BLOCKS, $currentPage, $currentBlock, $startQueryPoint);
-  $conn->close();
   return $paginationObj;
 }
 // -->> 페이지네이션 함수
 
 // <<-- 페이지네이션 출력 함수
 function prtPaginationData($argPaginationObj, $argArraySearchedData) {
-  $startPage = $argPaginationObj->currentBlock * PaginationData::numMaxPage; // 현 블록에서 첫 페이지 숫자
+  $startPage = ($argPaginationObj->currentBlock - 1) * (PaginationData::numMaxPage - 1) + $argPaginationObj->currentBlock; // 현 블록에서 첫 페이지 숫자
   $arraySearchedData[0] =  "AND " . $argArraySearchedData[0];
 
   // [<<][<] 출력 구문
   // 총 블럭 값과 현재 위치한 블럭 값이 같을 경우
   if ($argPaginationObj->currentBlock != 0) {
-    echo "<a href=$_SERVER[PHP_SELF]?start=0&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . ">[<<]</a>";
-    echo "<a href=$_SERVER[PHP_SELF]?block=" . ($argPaginationObj->currentBlock - 1) . "&start=" . ($startPage - PaginationData::numMaxPage) . "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . ">[<]</a>";
-  } else {
-    echo "<a href=$_SERVER[PHP_SELF]?start=0&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . ">[<<]</a>";
-  }
+    echo "<a href=$_SERVER[PHP_SELF]?start=0" .
+      "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+      ">[<<]</a>";
 
+    echo "<a href=$_SERVER[PHP_SELF]?block=" . ($argPaginationObj->currentBlock) . "&start=" . ($startPage - PaginationData::numMaxPage) .
+      "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+      ">[<]</a>";
+  } else {
+    echo "<a href=$_SERVER[PHP_SELF]?start=0" .
+      "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+      ">[<<]</a>";
+  }
   // 페이지 넘버링 출력 <a href>
   for ($i = $startPage; $i < $startPage + PaginationData::numMaxPage; $i++) {
     // 출력되는 페이지는 총 페이지 수를 넘지 않는다.
     if ($i < $argPaginationObj->numPages) {
+
       // 현재 보고 있는 페이지와 출력되는 페이지가 같을 경우 "빨간색" 으로 표시한다
       if ($argPaginationObj->currentPage != $i)
-        echo "<a href=$_SERVER[PHP_SELF]?start=$i&block=$argPaginationObj->currentBlock" . "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . ">[" . ($i + 1) . "]" . "</a>";
+        echo "<a href=$_SERVER[PHP_SELF]?start=$i&block=$argPaginationObj->currentBlock&search=" .
+          $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+          ">[" . ($i) . "]" . "</a>";
       else
-        echo "<a href=$_SERVER[PHP_SELF]?start=$i&block=$argPaginationObj->currentBlock&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . " style=color:red>[" . ($i + 1) . "]</a>";
+
+        echo "<a href=$_SERVER[PHP_SELF]?start=$i&block=$argPaginationObj->currentBlock&search=" .
+          $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+          " style=color:red>[" . ($i) . "]</a>";
     }
   }
   // [>>][>] 출력 구문
   // 총 블럭 값과 현재 위치한 블럭 값이 같을 경우
   if ($argPaginationObj->numBlocks > $argPaginationObj->currentBlock) {
-    echo "<a href=$_SERVER[PHP_SELF]?block=" . ($argPaginationObj->currentBlock + 1) . "&start=" . ($startPage + PaginationData::numMaxPage) . "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . ">[>]</a>";
-    echo "<a href=$_SERVER[PHP_SELF]?start=" . ($argPaginationObj->numPages - 1) . "&block=" . ($argPaginationObj->numBlocks) . "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . ">[>>]</a>";
+    echo "<a href=$_SERVER[PHP_SELF]?block=" . ($argPaginationObj->currentBlock) . "&start=" . ($startPage + PaginationData::numMaxPage) .
+      "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+      ">[>]</a>";
+
+    echo "<a href=$_SERVER[PHP_SELF]?start=" . ($argPaginationObj->numPages) . "&block=" . ($argPaginationObj->numBlocks) .
+      "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+      ">[>>]</a>";
   } else {
-    echo "<a href=$_SERVER[PHP_SELF]?start=" . ($argPaginationObj->numPages - 1) . "&block=" . ($argPaginationObj->numBlocks) . "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] . ">[>>]</a>";
+    echo "<a href=$_SERVER[PHP_SELF]?start=" . ($argPaginationObj->numPages) . "&block=" . ($argPaginationObj->numBlocks) .
+      "&search=" . $argArraySearchedData[0] . "&search-text=" . $argArraySearchedData[1] .
+      ">[>>]</a>";
   }
 }
 // -->> 페이지네이션 출력 함수
@@ -263,7 +282,6 @@ function checkInputValue() {
         $arraySearchedCookie = ["", ""];
       }
       $arraySearchedData = checkInputValue();
-
       $paginationObj = getPaginationData($arraySearchedData); // 페이지네이션을 위해 필요 데이터를 가져옵니다.
       getPostOnDB($postList, $paginationObj, $arraySearchedData); // DB로부터 글 가져오고, 출력하기
       ?>

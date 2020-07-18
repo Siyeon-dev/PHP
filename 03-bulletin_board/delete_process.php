@@ -5,10 +5,12 @@ require_once('./boardConfig.php');
 // <<-- DB 로부터 해당 포스트의 작성된 패스워드를 가져오는 함수
 function getPasswordOnDB() {
   $conn = connectDB();
-  $getPasswdQuery = "SELECT user_passwd FROM mybulletin WHERE board_id={$_POST['board_id']}";
+
+  $getPasswdQuery = "SELECT user_passwd FROM mybulletin WHERE board_id=";
+  $getPasswdQuery .= $_POST['board_pid'] != "" ? $_POST['board_pid'] : $_POST['board_id'];
 
   if (!$result = $conn->query($getPasswdQuery)) {
-    echo "쿼리문 실패! ";
+    echo "<br>쿼리문 실패! getPassword<br>" . $conn->error;
     exit(-1);
   }
   $userPwOnDB = $result->fetch_array();
@@ -18,9 +20,9 @@ function getPasswordOnDB() {
 
 // <<-- 비밀번호를 비교하는 함수
 function comparePassword($argPwFromDB, $argPwFromUser) {
-  if (password_verify($argPwFromUser, $argPwFromDB))
+  if (password_verify($argPwFromUser, $argPwFromDB)) {
     return true;
-  else
+  } else
     return false;
 }
 // -->> 비밀번호를 비교하는 함수
@@ -28,10 +30,11 @@ function comparePassword($argPwFromDB, $argPwFromUser) {
 // <<-- 글을 지우는 함수
 function deletePost() {
   $conn = connectDB();
-  $deletePostQuery = "DELETE FROM mybulletin WHERE board_id={$_POST['board_id']}";
+  $deletePostQuery = "DELETE FROM mybulletin WHERE board_id=";
+  $deletePostQuery .= $_POST['board_pid'] != "" ? $_POST['board_pid'] : $_POST['board_id'];
 
   if (!$result = $conn->query($deletePostQuery)) {
-    echo "쿼리문 실패! ";
+    echo "쿼리문 실패! delete";
     exit(-1);
   }
 }
@@ -45,6 +48,11 @@ function hrefListPage($argResult) {
     echo 'alert("패스워드가 일치하지 않습니다.");';
     echo 'location.href="view.php?board_id=' . $_POST['board_id'] . '";';
     echo '</script>';
+  } else if ($_POST['board_pid'] != "") {
+    echo '<script>';
+    echo 'alert("해당 댓글이 삭제되었습니다.");';
+    echo 'location.href="view.php?board_id=' . $_POST['board_id'] . '";';
+    echo '</script>';
   } else {
     echo '<script>alert("해당 글이 삭제되었습니다.");</script>';
     $str = <<<'HTML'
@@ -56,7 +64,6 @@ function hrefListPage($argResult) {
   }
 }
 // -->> list.php 호출 함수
-
 
 if (boardConf::IS_CHECK_PASSWORD) {
   // 비밀번호 검사 할 때,
