@@ -1,8 +1,6 @@
 <?php
 require_once('../Config/board_conf.php');
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,15 +13,11 @@ require_once('../Config/board_conf.php');
 </head>
 
 <body>
-
   <fieldset style="border: 1 solid">
-
     <legend>
       <h1 style="display: inline">글 작성하기</h1>
     </legend>
-
-    <!-- write_process.php 를 진행합니다. <게시글 작성> -->
-    <form action="<?php echo boardAddrInfo::FILENAME_WRITE_PROCESS ?>" method="POST">
+    <form action="#" method="POST">
       <label for="title">제목</label>
       <input type="text" id="title" name="<?php echo nameOfPostData::BOARD_TITLE ?>" placeholder="제목을 입력해주세요">
       <label for="userId">작성자</label>
@@ -32,13 +26,10 @@ require_once('../Config/board_conf.php');
       <input type="password" id="userPw" name="<?php echo nameOfPostData::USER_PW ?>" placeholder="비밀번호를 입력해주세요"><br>
       <label for="text">본문</label>
       <textarea id="text" name="<?php echo nameOfPostData::BOARD_CONTENTS ?>"></textarea>
-
-      <input type="submit" id="Submit" value="글쓰기" style="background-color:#d3dce6; color:#4e5152">
-    </form>
-
-    <!-- list.php 를 진행합니다. <게시글 확인> -->
-    <form action="<?php echo boardAddrInfo::FILENAME_LIST ?>" method="POST">
-      <input type="submit" id="Submit" value="목록으로" style="background-color:#d3dce6; color:#4e5152">
+      <!-- write_process.php 로 이동합니다. <게시글 작성> -->
+      <input type="submit" id="submit" value="글쓰기" formaction="<?php echo boardAddrInfo::FILENAME_WRITE_PROCESS ?>">
+      <!-- list.php 로 이동합니다. <게시글 리스트> -->
+      <input type="submit" id="submit" value="목록으로" formaction="<?php echo boardAddrInfo::FILENAME_LIST ?>">
     </form>
   </fieldset>
 </body>

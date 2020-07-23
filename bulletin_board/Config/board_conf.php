@@ -7,7 +7,7 @@ ini_set("display_errors", 1);
 // 기본적인 bulletin board 에 대한 설정 변수가 저장되는 class
 class boardSettings {
   const IS_CHECK_PASSWORD = true;
-  const IS_DEBUG_MODE = true;
+  const IS_DEBUG_MODE     = false;
 }
 
 // <<-- POST's key name
@@ -17,6 +17,7 @@ class nameOfPostData {
   const BOARD_PID         = "board_pid";
   const BOARD_TITLE       = "board_title";
   const BOARD_CONTENTS    = "board_contents";
+  const BOARD_REG_DATE    = "board_reg_date";
   // 유저와 관련된 key 값의 이름
   const USER_ID           = "user_id";
   const USER_PW           = "user_pw";
@@ -42,33 +43,35 @@ class boardAddrInfo {
   const MVC_MODEL       = "Model/";
   const MVC_VIEW        = "View/";
   const MVC_CONTROLLER  = "Controller/";
-  // .php File Address
+  // VIEW FILENAME
   const FILENAME_LIST             = "../View/list.php";
   const FILENAME_VIEW             = "../View/view.php";
   const FILENAME_WRITE            = "../View/write.php";
   const FILENAME_MODIFY           = "../View/modify.php";
   const FILENAME_DELETE           = "../View/delete.php";
-
-  const FILENAME_WRITE_PROCESS    = "../Controller/write_process.php";
-  const FILENAME_DELETE_PROCESS   = "../Controller/delete_process.php";
-  const FILENAME_MODIFY_PROCESS   = "../Controller/modify_process.php";
+  // CONTROLLER FILENAME
+  const FILENAME_LIST_PROCESS     = "../Controller/list_process.php";
   const FILENAME_VIEW_PROCESS     = "../Controller/view_process.php";
-
+  const FILENAME_WRITE_PROCESS    = "../Controller/write_process.php";
+  const FILENAME_MODIFY_PROCESS   = "../Controller/modify_process.php";
+  const FILENAME_DELETE_PROCESS   = "../Controller/delete_process.php";
+  // MODEL FILENAME
   const FILENAME_DB_QUERY         = "../Model/db_query.php";
   const FILENAME_BOARD_UTIL       = "../Model/board_util.php";
 }
 // -->> default file address of bulletin board 
 
+
 // <<-- 포스트를 저장할 객체
 class PostData {
-  public $board_id;
-  public $board_pid;
-  public $user_name;
-  public $user_passwd;
-  public $title;
-  public $contents;
-  public $hits;
-  public $reg_date;
+  public $board_id;     // 글 번호
+  public $board_pid;    // 부모 게시글 번호
+  public $user_name;    // 작성자 이름
+  public $user_passwd;  // 패스워드
+  public $title;        // 제목
+  public $contents;     // 내용
+  public $hits;         // 조회수
+  public $reg_date;     // 작성일
 
   // 생성자 함수 정의
   public function __construct(
@@ -95,7 +98,7 @@ class PostData {
 
 // <<-- 페이지네이션 데이터를 저장할 객체
 class PaginationData {
-  const numMaxPost      = 4;  // 페이지당 포스트 수
+  const numMaxPost      = 5;  // 페이지당 포스트 수
   const numMaxPage      = 10;  // 블럭당 페이지 수
 
   public $numRows         = 0;  // 총 포스트 수

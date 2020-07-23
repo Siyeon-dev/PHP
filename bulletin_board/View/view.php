@@ -1,9 +1,7 @@
 <?php
 require_once('../Controller/view_process.php');
-
-$postData = getPostOnDB(); // 게시글에 대한 정보를 가지고 있는 객체입니다.
+require_once('../Config/board_conf.php');
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,44 +11,89 @@ $postData = getPostOnDB(); // 게시글에 대한 정보를 가지고 있는 객
   <title>VIEW</title>
   <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="./Style/styles.css" />
+  <style>
+    h1 {
+      width: 450px;
+      font-weight: 100;
+      font-size: 32px;
+      line-height: 1.5;
+      margin-bottom: 1em;
+      color: #101010;
+      letter-spacing: -0.05em;
+    }
+
+    textarea:focus,
+    textarea:hover,
+    textarea:active {
+      border-color: #1fb6ff;
+      outline: none;
+      box-shadow: none;
+    }
+
+    textarea {
+      display: block;
+      width: 450px;
+      height: 200px;
+      padding: 0 12px;
+      border-radius: 7px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      border: 1px solid #d3dce6;
+      transition: border-color 200ms ease-in-out;
+    }
+
+    label {
+      display: block;
+      width: 100%;
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    input {
+      display: block;
+      width: 450px;
+      height: 44px;
+      padding: 0 12px;
+      border-radius: 7px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      border: 1px solid #d3dce6;
+      transition: border-color 200ms ease-in-out;
+    }
+  </style>
 </head>
 
 <body>
-
   <fieldset style="border: 1 solid; width:370px;">
     <legend>
       <h1 style="display: inline">글 보기</h1>
     </legend>
-    <p style="text-align: right;">글번호 - <?php echo $postData->board_id ?></p>
+    <p style="text-align: right;">글번호 - <?= $postData[1]->board_id ?></p>
     <!-- 게시글 보기 -->
-    <form action="<?php echo boardAddrInfo::FILENAME_LIST ?>" method="POST">
+    <form action="#" method="GET">
       <label for="title">제목</label>
-      <input type="text" id="title" name="<?php echo nameOfPostData::BOARD_TITLE ?>" placeholder="제목을 입력해주세요" value="<?php echo $postData->title ?>" disabled readonly>
+      <input type="text" id="title" name="<?= nameOfPostData::BOARD_TITLE ?>" value="<?= $postData[1]->title ?>" disabled readonly>
       <label for="userId">작성자</label>
-      <input type="text" id="userId" name="<?php echo nameOfPostData::USER_ID ?>" placeholder="작성자 이름을 입력해주세요" value="<?php echo $postData->user_name ?>" disabled readonly>
-      <label for="userPw">작성일</label>
-      <input type="text" id="userPw" name="<?php echo nameOfPostData::USER_PW ?>" placeholder="비밀번호를 입력해주세요" value="<?php echo date_format(date_create($postData->reg_date), "Y년 m월 d일") ?>" disabled readonly>
+      <input type="text" id="userId" name="<?= nameOfPostData::USER_ID ?>" value="<?= $postData[1]->user_name ?>" disabled readonly>
+      <label for="reg_data">작성일</label>
+      <input type="text" id="reg_data" name="<?= nameOfPostData::BOARD_REG_DATE ?>" value="<?= date_format(date_create($postData[1]->reg_date), "Y년 m월 d일") ?>" disabled readonly>
       <label for="text">본문</label>
-      <textarea id="text" name="<?php echo nameOfPostData::BOARD_CONTENTS ?>" cols="48" rows="10" style="resize: none" placeholder="<?php echo $postData->contents ?>" disabled readonly></textarea>
+      <textarea id="text" name="<?= nameOfPostData::BOARD_CONTENTS ?>" style="resize: none" placeholder="<?= $postData[1]->contents ?>" disabled readonly></textarea>
 
       <!-- 글목록으로 돌아가기 위한 데이터 전송부 -->
-      <input type="hidden" name="<?php echo nameOfPostData::PAGINATION_PAGE ?>" value="<?php echo $_SESSION[nameOfPostData::PAGINATION_PAGE] ?>">
-      <input type="hidden" name="<?php echo nameOfPostData::PAGINATION_BLOCK ?>" value="<?php echo $_SESSION[nameOfPostData::PAGINATION_BLOCK] ?>">
-      <input type="hidden" name="<?php echo nameOfPostData::SEARCH_TYPE ?>" value="<?php echo $_SESSION[nameOfPostData::SEARCH_TYPE] ?>">
-      <input type="hidden" name="<?php echo nameOfPostData::SEARCH_TEXT ?>" value="<?php echo $_SESSION[nameOfPostData::SEARCH_TEXT] ?>">
-      <input type="submit" id="Submit" value="글목록" style="background-color:#d3dce6; color:#4e5152">
-    </form>
+      <input type="hidden" name="<?= nameOfPostData::PAGINATION_PAGE ?>" value="<?= $_SESSION[nameOfPostData::PAGINATION_PAGE] ?>">
+      <input type="hidden" name="<?= nameOfPostData::PAGINATION_BLOCK ?>" value="<?= $_SESSION[nameOfPostData::PAGINATION_BLOCK] ?>">
+      <input type="hidden" name="<?= nameOfPostData::SEARCH_TYPE ?>" value="<?= $_SESSION[nameOfPostData::SEARCH_TYPE] ?>">
+      <input type="hidden" name="<?= nameOfPostData::SEARCH_TEXT ?>" value="<?= $_SESSION[nameOfPostData::SEARCH_TEXT] ?>">
 
-    <!-- 글수정 -->
-    <form action="<?php echo boardAddrInfo::FILENAME_MODIFY ?>" method="POST">
-      <input type="submit" id="Submit" value="글수정" style="background-color:#d3dce6; color:#4e5152">
-      <input type="hidden" id="Submit" name="<?php echo nameOfPostData::BOARD_ID ?>" value="<?php echo $postData->board_id ?>">
-    </form>
+      <input type="hidden" name="<?= nameOfPostData::BOARD_ID ?>" value="<?= $postData[1]->board_id ?>">
+      <!-- 글목록 -->
+      <input type="submit" id="submit" value="글목록" formaction="<?= boardAddrInfo::FILENAME_LIST ?>">
+      <!-- 글수정 -->
+      <input type="submit" id="submit" value="글수정" formaction="<?= boardAddrInfo::FILENAME_MODIFY ?>">
+      <!-- 글삭제 -->
+      <input type="submit" id="submit" value="글삭제" formaction="<?= boardAddrInfo::FILENAME_DELETE ?>">
 
-    <!-- 글삭제 -->
-    <form action="<?php echo boardAddrInfo::FILENAME_DELETE ?>" method="POST">
-      <input type="submit" id="Submit" value="글삭제" style="background-color:#d3dce6; color:#4e5152">
-      <input type="hidden" id="Submit" name="<?php echo nameOfPostData::BOARD_ID ?>" value="<?php echo $postData->board_id ?>">
     </form>
     <br>
     <hr>
@@ -59,17 +102,18 @@ $postData = getPostOnDB(); // 게시글에 대한 정보를 가지고 있는 객
       <p style="text-align: center;">Comment</p>
     </strong>
     <br>
-
     <!-- Comment 입력부 -->
-    <form action="<?php echo boardAddrInfo::FILENAME_WRITE_PROCESS ?>" method="POST">
+    <form action="<?= boardAddrInfo::FILENAME_WRITE_PROCESS ?>" method="POST">
       <label for="comment-contents">덧글 내용</label>
-      <textarea id="comment-contents" name="<?php echo nameOfPostData::COMMENT_CONTENTS ?>"></textarea>
+      <textarea id="comment-contents" name="<?= nameOfPostData::BOARD_CONTENTS ?>" style="height: 50px;"></textarea>
       <label for=" comment-user-name">작성자</label>
-      <input type="text" id="comment-user-name" name="<?php echo nameOfPostData::USER_ID ?>">
+      <input type="text" id="comment-user-name" name="<?= nameOfPostData::USER_ID ?>">
       <label for="comment-user-passwd">비밀번호</label>
-      <input type="password" id="comment-user-passwd" name="<?php echo nameOfPostData::USER_PW ?>">
-      <input type="hidden" name="<?php echo nameOfPostData::BOARD_ID ?>" value="<?php echo $postData->board_id ?>">
-      <input type="submit" value="등록">
+      <input type="password" id="comment-user-passwd" name="<?= nameOfPostData::USER_PW ?>">
+      <input type="hidden" name="<?= nameOfPostData::BOARD_PID ?>" value="true">
+      <input type="hidden" name="<?= nameOfPostData::BOARD_TITLE ?>" value="----This is comment----">
+      <input type="hidden" name="<?= nameOfPostData::BOARD_ID ?>" value="<?= $postData[1]->board_id ?>">
+      <input type="submit" id="submit" value="등록">
     </form>
 
     <!-- Comment 출력부 -->
@@ -87,7 +131,8 @@ $postData = getPostOnDB(); // 게시글에 대한 정보를 가지고 있는 객
       <tbody>
         <br>
         <?php
-        getCommentOnDB($postData);
+        $commentData = getPostOnDB(nameOfPostData::BOARD_PID, $_SESSION[nameOfPostData::BOARD_ID]);
+        prtCommentData($commentData[0]);
         ?>
       </tbody>
     </table>

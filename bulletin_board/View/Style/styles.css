@@ -1,6 +1,5 @@
 /* styles.css */
 @import url(https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
-
 table {
   border: 1px solid #000;
   border-collapse: collapse;
@@ -39,31 +38,6 @@ tbody th[colspan="6"] {
   background-color: #f9fafc;
   color: #1f2d3d;
 }
-
-td.html-css-basic {
-  color: #1fb6ff;
-}
-
-td.js-basic {
-  color: #ffc82c;
-}
-
-td.js-skillup {
-  color: #592dea;
-}
-
-td.sass-basic {
-  color: #ff16d1;
-}
-
-td.coding {
-  color: #ff5216;
-}
-
-td.portfolio {
-  color: #13ce66;
-}
-
 * {
   margin: 0;
   box-sizing: border-box;
@@ -107,6 +81,7 @@ textarea:active {
 
 textarea {
   display: block;
+  resize: none;
   width: 360px;
   height: 200px;
   padding: 0 12px;
@@ -134,7 +109,10 @@ input {
   border: 1px solid #d3dce6;
   transition: border-color 200ms ease-in-out;
 }
-
+#submit {
+  background-color: #d3dce6;
+  color: #4e5152;
+}
 input:focus,
 input:hover,
 input:active {

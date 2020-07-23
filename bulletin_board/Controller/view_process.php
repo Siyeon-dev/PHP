@@ -1,44 +1,29 @@
 <?php
 require_once('../Config/board_conf.php');
 require_once('../Config/board_util.php');
-require_once('../Model/db_info.php');
 require_once('../Model/db_query.php');
 
-session_start();
+if (!array_key_exists(nameOfPostData::BOARD_ID, $_SESSION))
+  $_SESSION[nameOfPostData::BOARD_ID] = $_GET[nameOfPostData::BOARD_ID];
 
-
-$_POST[nameOfPostData::BOARD_ID] = 439;
-
-
-
-
-if (array_key_exists(nameOfPostData::SEARCH_TYPE, $_POST)) {
-  $_SESSION[nameOfPostData::SEARCH_TYPE]      = $_POST[nameOfPostData::SEARCH_TYPE];
-  $_SESSION[nameOfPostData::SEARCH_TEXT]      = $_POST[nameOfPostData::SEARCH_TEXT];
-  $_SESSION[nameOfPostData::PAGINATION_PAGE]  = $_POST[nameOfPostData::PAGINATION_PAGE];
-  $_SESSION[nameOfPostData::PAGINATION_BLOCK] = $_POST[nameOfPostData::PAGINATION_BLOCK];
+if (!array_key_exists(nameOfPostData::PAGINATION_PAGE, $_SESSION)) {
+  $_SESSION[nameOfPostData::PAGINATION_PAGE] = $_GET[nameOfPostData::PAGINATION_PAGE];
+  $_SESSION[nameOfPostData::PAGINATION_BLOCK] = $_GET[nameOfPostData::PAGINATION_BLOCK];
+  $_SESSION[nameOfPostData::SEARCH_TEXT] = $_GET[nameOfPostData::SEARCH_TEXT];
+  $_SESSION[nameOfPostData::SEARCH_TYPE] = $_GET[nameOfPostData::SEARCH_TYPE];
 }
 
-// <<-- DB 로부터 저장되어있는 글 정보를 가져오는 함수
-function getPostOnDB() {
-  // 
-  $arrayArticleData = getSelectedOnDB(nameOfPostData::BOARD_ID, $_POST[nameOfPostData::BOARD_ID]);
 
-  return $arrayArticleData;
-}
-// -->> DB 로부터 저장되어있는 글 정보를 가져오는 함수
+$postData = getPostOnDB(nameOfPostData::BOARD_ID, $_SESSION[nameOfPostData::BOARD_ID]); // 게시글에 대한 정보를 가지고 있는 객체입니다.
 
-// <<-- DB 로부터 저장되어있는 덧글 정보를 가져오는 함수
-function getCommentOnDB($argArticleData) {
-  $board_id = $argArticleData->board_id;
+increaseHits($_SESSION);
 
-  $arrayCommentData = getSelectedOnDB(nameOfPostData::BOARD_PID, $_POST[nameOfPostData::BOARD_ID]);
 
-  prtPostData($arrayCommentData, $board_id); // DB로부터 가져온 글 출력하기
-}
-
+/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////// FUNCTION DECLARATION  //////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
 // <<-- DB 로부터 가져온 글 목록 Table 에 출력하는 함수
-function prtPostData($argCommentData, $post_board_id) {
+function prtCommentData($argCommentData) {
 
   foreach ($argCommentData as $comment) {
     echo '<tr align=center>';
@@ -46,10 +31,13 @@ function prtPostData($argCommentData, $post_board_id) {
     echo "<td>{$comment->contents}</td>";
     echo "<td>" . date_format(date_create($comment->reg_date), "Y/m/d") . "</td>";
 
-    echo "<td><form action=" . boardAddrInfo::FILENAME_DELETE . "method='POST'><button>삭제</button>";
-    echo "<input type='hidden' name='" . nameOfPostData::BOARD_ID . "' value='" . $post_board_id . "'>";
+    echo "<td><form action='" . boardAddrInfo::FILENAME_DELETE . "'method='POST'><button>삭제</button>";
+    echo "<input type='hidden' name='" . nameOfPostData::BOARD_ID . "' value='" . $_SESSION[nameOfPostData::BOARD_ID] . "'>";
     echo "<input type='hidden' name='" . nameOfPostData::BOARD_PID . "' value='" . $comment->board_id . "'></form></td>";
     echo "</tr>";
   }
 }
 // -->> DB 로부터 가져온 글 목록 Table 에 출력하는 함수
+/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////// FUNCTION DECLARATION  //////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
